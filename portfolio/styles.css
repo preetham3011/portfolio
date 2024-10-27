@@ -1,0 +1,248 @@
+/* General Styles */
+/* Basic Colors from the Palette */
+:root {
+    --background-color: #333333;   /* Darkest Color */
+    --heading-color: #556677;      /* Second Dark Color */
+    --highlight-color: #88BBAA;    /* Light Accent Color */
+    --subtle-highlight: #DDDDDD;   /* Lightest Color */
+}
+
+/* Overall Background Color */
+body {
+    background-color: var(--background-color);
+    color: var(--subtle-highlight); /* Default text color */
+    font-family: 'Poppins', sans-serif; /* Professional-looking font */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Section Headings */
+h2 {
+    color: var(--heading-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+/* Sections Styling */
+section {
+    padding: 2rem;
+    margin-bottom: 2rem;
+    background-color: var(--background-color);
+}
+
+/* Social Icons */
+.social-icons a {
+    margin: 0 0.8rem;
+    color: var(--subtle-highlight); /* Default icon color */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--highlight-color); /* Hover color */
+    transform: scale(1.2);
+}
+
+/* Button Styling */
+button, .highlighted-section {
+    background-color: var(--highlight-color);
+    color: var(--background-color);
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .highlighted-section:hover {
+    background-color: var(--heading-color); /* Darken on hover */
+}
+
+/* Nav Bar Links */
+nav ul li a {
+    color: var(--subtle-highlight);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--highlight-color);
+}
+
+/* Highlight Certain Texts in Sections */
+.highlighted-text {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Merriweather', serif; /* Professional font with clean and sophisticated look */
+    color: #333;
+    background-color: #edf2f4;
+}
+
+/* Navbar Styles */
+header {
+    background-color: #374b4a; /* Dark Teal */
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+header nav ul {
+    list-style: none;
+}
+
+header nav ul li {
+    display: inline;
+    margin: 0 1.5rem;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+header nav ul li a:hover {
+    color: #a2d5c6; /* Mint Green for hover effect */
+}
+
+/* Spacing between sections */
+section {
+    padding: 4rem 5%;
+    margin-top: 2rem;
+    background-color: #f4f9f9; /* Light Gray for subtle background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Hover Animation for Section */
+section:hover {
+    transform: scale(1.02);
+}
+
+/* Hero Section */
+.hero-section {
+    background-color: #536872; /* Slate Blue */
+    color: #fff;
+    text-align: center;
+    padding: 5rem 0;
+}
+
+.hero-section h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    color: #d1e1e1; /* Light gray for a softer contrast */
+}
+
+/* About Section */
+#about p {
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Project Section */
+.project-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.project-item {
+    background: #f4f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #d3d3d3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.project-item:hover {
+    transform: translateY(-5px);
+    background-color: #a2d5c6; /* Mint Green for a standout effect */
+}
+
+/* Contact Section */
+#contact .social-icons img {
+    width: 40px;
+    margin: 0 0.8rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+#contact .social-icons img:hover {
+    transform: scale(1.2);
+}
+
+/* Button Styling */
+button {
+    background-color: #374b4a; /* Dark Teal */
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #536872; /* Slate Blue */
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+section {
+    animation: fadeInUp 0.6s ease both;
+}
+.fade-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* Contact Section Social Icons Styling */
+.social-icons {
+    margin-top: 1.5rem;
+}
+
+.social-icons a {
+    margin: 0 0.8rem;
+    color: #374b4a; /* Dark Teal color from your palette */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #a2d5c6; /* Mint Green for hover effect */
+    transform: scale(1.2);
+}

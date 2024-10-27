@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Tree Visualizer</title>
+    <style>
+        /* Global Styles */
+        body {
+            background-color: #fcf4d1;
+
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: #7f523d;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #a86f55;
+            font-weight: bold;
+        }
+
+        #tree-container {
+            position: relative;
+            height: 400px;
+            margin-top: 30px;
+            border: 2px dashed #6b4533;
+            border-radius: 8px;
+            padding: 10px;
+            overflow: auto;
+        }
+        
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #8e634f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c39884;
+        }
+
+        .node {
+            background-color: #885842;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            border: 2px solid #333;
+            display: inline-block;
+            text-align: center;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .node.fade-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .node.traverse-highlight {
+            background-color: #ffb120;
+        }
+
+        .level-label {
+            position: absolute;
+            font-size: 14px;
+            color: #333;
+            right: 10px; /* Set this to a fixed value for right alignment */
+            top: 0; /* Aligns the level label to the top of the node */
+            transform: translateY(-50%); /* Center it vertically with the node */
+        }
+
+
+        .tree-line {
+            height: 2px;
+            background-color: #333;
+            position: absolute;
+            transform-origin: left center;
+        }
+
+        .controls div {
+            margin-bottom: 20px;
+        }
+
+        /* Input and button styling */
+        input[type="number"], select {
+            width: 200px;
+        }
+
+        button {
+            width: 150px;
+            font-size: 16px;
+        }
+
+        /* Responsiveness for smaller screens */
+        @media (max-width: 600px) {
+            input, select, button {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            #tree-container {
+                height: 300px;
+            }
+
+            .node {
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+            }
+
+            .controls {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Binary Tree Visualizer</h1>
+
+    <div class="controls">
+        <select id="operation" onchange="toggleOperationFields()">
+            <option value="insert">Insert Node</option>
+            <option value="delete">Delete Node</option>
+            <option value="traversal">Traverse Tree</option>
+        </select>
+
+        <div id="insertControls">
+            <div>
+                <input type="number" id="valueInput" placeholder="Node Value">
+                <input type="number" id="parentNode" placeholder="Parent Node Value">
+            </div>
+            <button onclick="insertNode()">Insert Node</button>
+        </div>
+
+        <div id="deleteControls" style="display: none;">
+            <div>
+                <input type="number" id="levelInput" placeholder="Level">
+                <input type="number" id="deleteValue" placeholder="Node Value">
+            </div>
+            <button onclick="deleteNode()">Delete Node</button>
+        </div>
+
+        <div id="traversalControls" style="display: none;">
+            <select id="traversalType">
+                <option value="inorder">Inorder</option>
+                <option value="preorder">Preorder</option>
+                <option value="postorder">Postorder</option>
+            </select>
+            <button onclick="traverseTree()">Traverse</button>
+        </div>
+    </div>
+
+    <h2>Binary Tree</h2>
+    <div id="tree-container"></div>
+
+    <script>
+        class TreeNode {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+                this.level = null;
+                this.htmlElement = null;
+            }
+        }
+    
+        class BinaryTree {
+            constructor() {
+                this.root = null;
+                this.nodeCount = 0;
+            }
+    
+            insert(value, parentValue) {
+                const newNode = new TreeNode(value);
+                if (this.root === null) {
+                    if (parentValue !== 0) {
+                        alert('Please input 0 as parent node value to create the root node.');
+                        return;
+                    }
+                    this.root = newNode;
+                    newNode.level = 0;
+                } else {
+                    const parent = this.findNode(this.root, parentValue);
+                    if (parent) {
+                        if (parent.left === null) {
+                            parent.left = newNode;
+                        } else if (parent.right === null) {
+                            parent.right = newNode;
+                        } else {
+                            alert('Both child nodes are occupied. Cannot insert more children here.');
+                            return;
+                        }
+                        newNode.level = parent.level + 1;
+                    } else {
+                        alert('Parent node not found');
+                        return;
+                    }
+                }
+                this.nodeCount++;
+                this.display();
+            }
+    
+            findNode(node, value) {
+                if (node === null) return null;
+                if (node.value === value) return node;
+                return this.findNode(node.left, value) || this.findNode(node.right, value);
+            }
+    
+            display() {
+                const container = document.getElementById('tree-container');
+                container.innerHTML = '';
+                if (this.root) {
+                    const baseGap = 150;
+                    this.displayNode(this.root, container, container.offsetWidth / 2, 20, baseGap);
+                }
+            }
+    
+            displayNode(node, container, x, y, gap) {
+                if (node) {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = 'node fade-in';
+                    nodeDiv.innerHTML = node.value;
+                    nodeDiv.style.position = 'absolute';
+                    nodeDiv.style.left = `${x}px`;
+                    nodeDiv.style.top = `${y}px`;
+                    container.appendChild(nodeDiv);
+                    node.htmlElement = nodeDiv;
+    
+                    // Keep node visible after fade-in
+                    setTimeout(() => {
+                        nodeDiv.classList.add('fade-in'); // Ensure class for fade-in effect
+                    }, 0); // Trigger the fade-in after node is added
+    
+                    const verticalGap = 100;
+    
+                    if (!document.getElementById(`level-${node.level}`)) {
+                        const levelLabel = document.createElement('div');
+                        levelLabel.className = 'level-label';
+                        levelLabel.id = `level-${node.level}`;
+                        levelLabel.innerHTML = `Level ${node.level}`;
+                        levelLabel.style.left = `${x}px`;
+                        levelLabel.style.top = `${y}px`;
+                        container.appendChild(levelLabel);
+                    }
+    
+                    if (node.left) {
+                        const leftX = x - gap;
+                        const leftY = y + verticalGap;
+                        this.displayNode(node.left, container, leftX, leftY, gap - 65);
+                        this.connectNodes(nodeDiv, node.left.htmlElement);
+                    }
+    
+                    if (node.right) {
+                        const rightX = x + gap;
+                        const rightY = y + verticalGap;
+                        this.displayNode(node.right, container, rightX, rightY, gap - 65);
+                        this.connectNodes(nodeDiv, node.right.htmlElement);
+                    }
+                }
+            }
+    
+            connectNodes(parentDiv, childDiv) {
+                const container = document.getElementById('tree-container');
+                const line = document.createElement('div');
+                line.className = 'tree-line';
+    
+                const x1 = parentDiv.offsetLeft + parentDiv.offsetWidth / 2;
+                const y1 = parentDiv.offsetTop + parentDiv.offsetHeight;
+                const x2 = childDiv.offsetLeft + childDiv.offsetWidth / 2;
+                const y2 = childDiv.offsetTop;
+    
+                const length = Math.hypot(x2 - x1, y2 - y1);
+                line.style.width = `${length}px`;
+                line.style.transform = `rotate(${Math.atan2(y2 - y1, x2 - x1)}rad)`;
+                line.style.position = 'absolute';
+                line.style.left = `${x1}px`;
+                line.style.top = `${y1}px`;
+                container.appendChild(line);
+            }
+    
+            delete(level, value) {
+                if (!this.root) return;
+                const deleted = this.deleteNode(this.root, null, level, value);
+                if (deleted) {
+                    this.display();
+                } else {
+                    alert('Node not found for deletion');
+                }
+            }
+    
+            deleteNode(node, parent, level, value) {
+                if (!node) return false;
+                if (node.level === level && node.value === value) {
+                    if (!node.left && !node.right) {
+                        if (parent.left === node) parent.left = null;
+                        else parent.right = null;
+                        return true;
+                    } else {
+                        alert('Node is not a leaf node, cannot delete');
+                        return false;
+                    }
+                }
+                const leftDeleted = this.deleteNode(node.left, node, level, value);
+                if (leftDeleted) return true;
+                return this.deleteNode(node.right, node, level, value);
+            }
+    
+            inorderTraversal(node, result, callback) {
+                if (node) {
+                    this.inorderTraversal(node.left, result, callback);
+                    result.push(node);
+                    callback(node);
+                    this.inorderTraversal(node.right, result, callback);
+                }
+            }
+    
+            preorderTraversal(node, result, callback) {
+                if (node) {
+                    result.push(node);
+                    callback(node);
+                    this.preorderTraversal(node.left, result, callback);
+                    this.preorderTraversal(node.right, result, callback);
+                }
+            }
+    
+            postorderTraversal(node, result, callback) {
+                if (node) {
+                    this.postorderTraversal(node.left, result, callback);
+                    this.postorderTraversal(node.right, result, callback);
+                    result.push(node);
+                    callback(node);
+                }
+            }
+        }
+    
+        const tree = new BinaryTree();
+    
+        function toggleOperationFields() {
+            const operation = document.getElementById('operation').value;
+            document.getElementById('insertControls').style.display = operation === 'insert' ? 'block' : 'none';
+            document.getElementById('deleteControls').style.display = operation === 'delete' ? 'block' : 'none';
+            document.getElementById('traversalControls').style.display = operation === 'traversal' ? 'block' : 'none';
+        }
+    
+        function insertNode() {
+            const value = parseInt(document.getElementById('valueInput').value);
+            const parentValue = parseInt(document.getElementById('parentNode').value) || 0;
+            tree.insert(value, parentValue);
+            document.getElementById('valueInput').value = '';
+            document.getElementById('parentNode').value = '';
+        }
+    
+        function deleteNode() {
+            const level = parseInt(document.getElementById('levelInput').value);
+            const value = parseInt(document.getElementById('deleteValue').value);
+            tree.delete(level, value);
+            document.getElementById('levelInput').value = '';
+            document.getElementById('deleteValue').value = '';
+        }
+    
+        function traverseTree() {
+            const type = document.getElementById('traversalType').value;
+            const result = [];
+            const highlightDuration = 800; // Duration to highlight each node (ms)
+    
+            const highlightNode = (node, index) => {
+                if (node) {
+                    node.htmlElement.classList.add('traverse-highlight');
+    
+                    // Remove highlight after duration
+                    setTimeout(() => {
+                        node.htmlElement.classList.remove('traverse-highlight');
+                        // Highlight the next node
+                        if (index < result.length - 1) {
+                            highlightNode(result[index + 1], index + 1);
+                        }
+                    }, highlightDuration);
+                }
+            };
+    
+            // Clear any previous highlights
+            const allNodes = document.querySelectorAll('.node');
+            allNodes.forEach(node => {
+                node.classList.remove('traverse-highlight');
+            });
+    
+            if (type === 'inorder') {
+                tree.inorderTraversal(tree.root, result, node => {});
+            } else if (type === 'preorder') {
+                tree.preorderTraversal(tree.root, result, node => {});
+            } else if (type === 'postorder') {
+                tree.postorderTraversal(tree.root, result, node => {});
+            }
+    
+            // Start highlighting from the first node
+            if (result.length > 0) {
+                highlightNode(result[0], 0);
+            }
+        }
+    </script>
+    
+</body>
+</html>

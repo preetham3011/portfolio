@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Meeting - Online Meeting Scheduler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://img.freepik.com/premium-photo/calendar-appointment-scheduler-with-pin-pink-background_539854-694.jpg?w=1380'); /* Background image */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #37474F;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #37474F;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Meeting</h2>
+        <form id="edit-meeting-form">
+            <label for="title">Meeting Title</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="date">Meeting Date</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Meeting Time</label>
+            <input type="time" id="time" name="time" required>
+
+            <button type="submit">Update Meeting</button>
+        </form>
+    </div>
+
+    <script>
+        // Get the meeting index from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const meetingIndex = urlParams.get('index');
+
+        // Load the meeting data into the form fields
+        function loadMeetingData() {
+            const meetings = JSON.parse(localStorage.getItem('meetings')) || [];
+            if (meetingIndex !== null && meetings[meetingIndex]) {
+                const meeting = meetings[meetingIndex];
+                document.getElementById('title').value = meeting.title;
+                document.getElementById('date').value = meeting.date;
+                document.getElementById('time').value = meeting.time;
+            } else {
+                alert('Meeting not found');
+                window.location.href = 'mymeetings.html'; // Redirect if no meeting is found
+            }
+        }
+
+        // Update the meeting data in localStorage
+        function updateMeeting(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            const meetings = JSON.parse(localStorage.getItem('meetings')) || [];
+            meetings[meetingIndex] = { title, date, time }; // Update the meeting
+
+            localStorage.setItem('meetings', JSON.stringify(meetings)); // Save back to localStorage
+
+            window.location.href = 'mymeetings.html'; // Redirect back to My Meetings page
+        }
+
+        // Load the meeting data when the page loads
+        window.onload = loadMeetingData;
+
+        // Attach event listener to the form submission
+        document.getElementById('edit-meeting-form').addEventListener('submit', updateMeeting);
+    </script>
+</body>
+</html>
